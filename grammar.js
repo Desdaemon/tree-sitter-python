@@ -89,6 +89,10 @@ module.exports = grammar({
     ')',
     '}',
     'except',
+
+    // Scans for a dot which is immediately followed by a string of whitespace
+    // except for line breaks. If in brackets, works the same as a normal dot.
+    $._dot_immediate,
   ],
 
   inline: $ => [
@@ -900,7 +904,7 @@ module.exports = grammar({
 
     attribute: $ => prec(PREC.call, seq(
       field('object', $.primary_expression),
-      '.',
+      alias($._dot_immediate, '.'),
       field('attribute', $.identifier),
     )),
 

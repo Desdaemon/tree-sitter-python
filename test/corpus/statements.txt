@@ -1626,3 +1626,21 @@ def more_generic[T, *Ts, **P]():
                               (identifier)))))))))))))
       (return_statement
         (identifier)))))
+
+================================================================================
+Line continuation
+================================================================================
+
+if foo.\
+  bar:
+  pass
+
+--------------------------------------------------------------------------------
+
+(module
+  (if_statement
+    (attribute
+      (identifier)
+      (identifier))
+    (block
+      (pass_statement))))

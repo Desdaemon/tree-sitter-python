@@ -28,3 +28,78 @@ def a(b):
           (string_end)))
       (expression_statement
         (identifier)))))
+
+=========================
+Lone incomplete attribute
+=========================
+
+foo.
+bar
+
+---
+
+(module
+  (ERROR
+    (identifier))
+  (expression_statement
+    (identifier)))
+
+=======================================
+Lone incomplete attribute (in function)
+=======================================
+
+def foo(self):
+  self.
+
+---
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (identifier))
+    (block
+      (ERROR
+        (identifier)))))
+
+===============================
+Sandwiched incomplete attribute
+===============================
+
+def foo(self):
+  a.
+  pass
+
+---
+
+(module
+  (function_definition
+    (identifier)
+    (parameters
+      (identifier))
+    (block
+      (ERROR
+        (identifier))
+      (pass_statement))))
+
+================================
+Incomplete attribute in brackets
+================================
+
+if any(foo. for foo in bar):
+  pass
+
+---
+
+(module
+  (if_statement
+    (call
+      (identifier)
+      (generator_expression
+        (ERROR
+          (identifier))
+        (for_in_clause
+          (identifier)
+          (identifier))))
+    (block
+      (pass_statement))))

@@ -19,6 +19,7 @@ enum TokenType {
     CLOSE_BRACKET,
     CLOSE_BRACE,
     EXCEPT,
+    DOT_IMMEDIATE,
 };
 
 typedef enum {
@@ -205,6 +206,30 @@ bool tree_sitter_python_external_scanner_scan(void *payload, TSLexer *lexer, con
             }
             advance(lexer);
             has_content = true;
+        }
+    }
+
+    if (valid_symbols[DOT_IMMEDIATE] && lexer->lookahead == '.') {
+        advance(lexer);
+        lexer->result_symbol = DOT_IMMEDIATE;
+        if (within_brackets) return true;
+        for (;;) {
+            switch (lexer->lookahead) {
+            case ' ': case '\t':
+                skip(lexer);
+                continue;
+            case '\\':
+                skip(lexer);
+                if (lexer->lookahead == '\n') {
+                    skip(lexer);
+                    continue;
+                }
+                return false;
+            case '\r': case '\n':
+                return false;
+            default:
+                return true;
+            }
         }
     }
 
